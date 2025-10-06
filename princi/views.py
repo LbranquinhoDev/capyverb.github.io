@@ -5,7 +5,8 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from .forms import CadastroComConviteForm, LoginForm
 from .models import Convite
-
+from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404
 
 def is_admin(user):
     return user.is_staff
@@ -128,3 +129,20 @@ def admin_convites(request):
     convites = Convite.objects.all().order_by('-data_criacao')
     return render(request, 'princi/admin_convites.html', {'convites': convites})
 
+@login_required
+def excluir_usuario(request, user_id):
+    # Impede que usuários comuns excluam outros usuários
+    if not request.user.is_superuser:
+        messages.error(request, 'Você não tem permissão para executar esta ação.')
+        return redirect('painel_admin')
+    
+    usuario = get_object_or_404(User, id=user_id)
+    
+    # Impede que o usuário exclua a si mesmo
+    if usuario == request.user:
+        messages.error(request, 'Você não pode excluir sua própria conta.')
+        return redirect('painel_admin')
+    
+    usuario.delete()
+    messages.success(request, 'Usuário excluído com sucesso!')
+    return redirect('princi/admin_convites.html')  # Altere para o nome da sua view de painel
