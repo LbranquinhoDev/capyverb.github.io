@@ -123,8 +123,12 @@ LOGOUT_REDIRECT_URL = '/'
 
 # Security settings for production - ARRUMADO PRA PARAR O LOOP
 if not DEBUG:
-    SECURE_SSL_REDIRECT = False  # ISSO AQUI É O MAIS IMPORTANTE - DEIXA FALSE
-    SESSION_COOKIE_SECURE = False  # Muda pra False também
-    CSRF_COOKIE_SECURE = False     # Muda pra False também
+    SECURE_SSL_REDIRECT = False
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    CSRF_TRUSTED_ORIGINS = [
+        'https://capyverb-github-io.onrender.com',
+        'https://*.onrender.com',
+    ]
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
