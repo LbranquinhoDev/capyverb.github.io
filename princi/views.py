@@ -127,3 +127,4 @@ def admin_convites(request):
     
     convites = Convite.objects.all().order_by('-data_criacao')
     return render(request, 'princi/admin_convites.html', {'convites': convites})
+
