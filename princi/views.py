@@ -70,49 +70,18 @@ def logout_view(request):
     messages.info(request, 'Você foi desconectado.')
     return redirect('index')
 
-@login_required
-@user_passes_test(is_admin)
-def admin_convites(request):
-    if request.method == 'POST':
-        emails = request.POST.get('emails', '').split('\n')
-        for email in emails:
-            email = email.strip()
-            if email:
-                Convite.objects.get_or_create(email=email)
-        messages.success(request, f'{len(emails)} convites criados!')
-    
-    convites = Convite.objects.all().order_by('-data_criacao')
-    return render(request, 'princi/admin_convites.html', {'convites': convites})
-
-@login_required
-@user_passes_test(is_admin) 
-def enviar_convite(request, convite_id):
-    convite = Convite.objects.get(id=convite_id)
-    # Integrar com serviço de email aqui
-    # por enquanto apenas uma mensagem de sucesso
-    messages.info(request, f'Convite para {convite.email}: {convite.codigo}')
-    return redirect('admin_convites')
-
 def aulas(request):
     return render(request, 'princi/aulas.html')
 
-
-def verificar_admin(user):
-    """Verifica se o usuário é admin/staff"""
-    return user.is_authenticated and user.is_staff
-
 @login_required
-@user_passes_test(verificar_admin, login_url='/login/')
+@user_passes_test(is_admin)
 def admin_convites(request):
-
-    if not request.user.is_authenticated:
-        messages.warning(request, 'Você precisa fazer login para acessar esta página.')
-        return redirect('login')
-    
+    # Verificação de permissão
     if not request.user.is_staff:
         messages.error(request, 'Acesso restrito para administradores.')
         return redirect('index')
     
+    # Processa criação de convites
     if request.method == 'POST':
         emails = request.POST.get('emails', '').split('\n')
         convites_criados = 0
@@ -125,44 +94,54 @@ def admin_convites(request):
         messages.success(request, f'{convites_criados} convites criados!')
         return redirect('admin_convites')
     
+    # Mostra lista de convites
     convites = Convite.objects.all().order_by('-data_criacao')
     return render(request, 'princi/admin_convites.html', {'convites': convites})
+
+@login_required
+@user_passes_test(is_admin) 
+def enviar_convite(request, convite_id):
+    convite = Convite.objects.get(id=convite_id)
+    # Integrar com serviço de email aqui
+    # por enquanto apenas uma mensagem de sucesso
+    messages.info(request, f'Convite para {convite.email}: {convite.codigo}')
+    return redirect('admin_convites')
 
 @login_required
 def excluir_usuario(request, user_id):
     # Impede que usuários comuns excluam outros usuários
     if not request.user.is_superuser:
         messages.error(request, 'Você não tem permissão para executar esta ação.')
-        return redirect('painel_admin')
+        return redirect('admin_convites')
     
     usuario = get_object_or_404(User, id=user_id)
     
     # Impede que o usuário exclua a si mesmo
     if usuario == request.user:
         messages.error(request, 'Você não pode excluir sua própria conta.')
-        return redirect('painel_admin')
+        return redirect('admin_convites')
     
     usuario.delete()
     messages.success(request, 'Usuário excluído com sucesso!')
-    return redirect('princi/admin_convites.html')  # Altere para o nome da sua view de painel
+    return redirect('admin_convites')
 
-# FUNÇÃO NOVA QUE TAVA FALTANDO - alterar_cargo
+# FUNÇÃO alterar_cargo
 @login_required
 def alterar_cargo(request, user_id):
     # Só deixa admin fazer isso
     if not request.user.is_superuser:
         messages.error(request, 'Tu não tem permissão pra fazer isso, mané!')
-        return redirect('admin_convites')  # vai pra página de convites
+        return redirect('admin_convites')
     
     # Pega o usuário que vai ter o cargo mudado
     usuario = get_object_or_404(User, id=user_id)
     
-    # Não deixa o usuário mudar o próprio cargo (pq daí ia se travar)
+    # Não deixa o usuário mudar o próprio cargo
     if usuario == request.user:
-        messages.error(request, 'Não pode mudar seu próprio cargo, se não vai se ferrar!')
+        messages.error(request, 'Não pode mudar seu próprio cargo!')
         return redirect('admin_convites')
     
-    # Aqui é a lógica pra mudar o cargo
+    # Lógica pra mudar o cargo
     if usuario.is_staff:
         # Se já é staff, vira usuário normal
         usuario.is_staff = False
