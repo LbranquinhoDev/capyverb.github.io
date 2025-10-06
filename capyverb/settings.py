@@ -14,7 +14,8 @@ DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
 SECRET_KEY = os.environ.get('SECRET_KEY', 'chave-local-desenvolvimento')
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',') + ['localhost', '127.0.0.1']
+# ALLOWED_HOSTS - ARRUMADO PRA PARAR O REDIRECT
+ALLOWED_HOSTS = ['capyverb-github-io.onrender.com', 'localhost', '127.0.0.1', '.onrender.com']
 
 # Database configuration - SQLite for development, PostgreSQL for production
 if 'DATABASE_URL' in os.environ:
@@ -120,11 +121,10 @@ LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
-# Security settings for production
+# Security settings for production - ARRUMADO PRA PARAR O LOOP
 if not DEBUG:
-    SECURE_SSL_REDIRECT = True
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
+    SECURE_SSL_REDIRECT = False  # ISSO AQUI É O MAIS IMPORTANTE - DEIXA FALSE
+    SESSION_COOKIE_SECURE = False  # Muda pra False também
+    CSRF_COOKIE_SECURE = False     # Muda pra False também
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
-    ALLOWED_HOSTS = ['.onrender.com', '.herokuapp.com', 'localhost', '127.0.0.1']
