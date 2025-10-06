@@ -1,4 +1,3 @@
-
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
@@ -90,7 +89,7 @@ def admin_convites(request):
 def enviar_convite(request, convite_id):
     convite = Convite.objects.get(id=convite_id)
     # Integrar com serviço de email aqui
-    # por enquanto, apenas uma mensagem de sucesso
+    # por enquanto apenas uma mensagem de sucesso
     messages.info(request, f'Convite para {convite.email}: {convite.codigo}')
     return redirect('admin_convites')
 
@@ -146,3 +145,35 @@ def excluir_usuario(request, user_id):
     usuario.delete()
     messages.success(request, 'Usuário excluído com sucesso!')
     return redirect('princi/admin_convites.html')  # Altere para o nome da sua view de painel
+
+# FUNÇÃO NOVA QUE TAVA FALTANDO - alterar_cargo
+@login_required
+def alterar_cargo(request, user_id):
+    # Só deixa admin fazer isso
+    if not request.user.is_superuser:
+        messages.error(request, 'Tu não tem permissão pra fazer isso, mané!')
+        return redirect('admin_convites')  # vai pra página de convites
+    
+    # Pega o usuário que vai ter o cargo mudado
+    usuario = get_object_or_404(User, id=user_id)
+    
+    # Não deixa o usuário mudar o próprio cargo (pq daí ia se travar)
+    if usuario == request.user:
+        messages.error(request, 'Não pode mudar seu próprio cargo, se não vai se ferrar!')
+        return redirect('admin_convites')
+    
+    # Aqui é a lógica pra mudar o cargo
+    if usuario.is_staff:
+        # Se já é staff, vira usuário normal
+        usuario.is_staff = False
+        messages.success(request, f'{usuario.username} agora é usuário normal!')
+    else:
+        # Se é usuário normal, vira staff
+        usuario.is_staff = True
+        messages.success(request, f'{usuario.username} agora é administrador!')
+    
+    # Salva a mudança
+    usuario.save()
+    
+    # Volta pra página de convites
+    return redirect('admin_convites')
