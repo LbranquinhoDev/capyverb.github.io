@@ -77,8 +77,6 @@ def aulas(request):
 @user_passes_test(is_admin)
 def admin_convites(request):
     try:
-        print("=== DEBUG: admin_convites chamada ===")
-        
         # Verificação de permissão
         if not request.user.is_staff:
             messages.error(request, 'Acesso restrito para administradores.')
@@ -86,41 +84,44 @@ def admin_convites(request):
         
         # Processa criação de convites
         if request.method == 'POST':
-            print("=== DEBUG: Método POST detectado ===")
             emails = request.POST.get('emails', '').split('\n')
-            print(f"=== DEBUG: Emails recebidos: {emails} ===")
-            
             convites_criados = 0
+            
             for email in emails:
                 email = email.strip()
                 if email:
-                    print(f"=== DEBUG: Processando email: {email} ===")
-                    try:
-                        convite, created = Convite.objects.get_or_create(email=email)
-                        print(f"=== DEBUG: Convite criado: {created}, ID: {convite.id} ===")
-                        if created:
-                            convites_criados += 1
-                    except Exception as e:
-                        print(f"=== DEBUG: Erro ao criar convite para {email}: {str(e)} ===")
-                        messages.error(request, f'Erro ao criar convite para {email}: {str(e)}')
+                    # Usa get_or_create mas força criação se não existir
+                    convite, created = Convite.objects.get_or_create(
+                        email=email,
+                        defaults={'usado': False}
+                    )
+                    if created:
+                        convites_criados += 1
+                        print(f"Convite criado: {convite.email} - {convite.codigo}")
             
-            messages.success(request, f'{convites_criados} convites criados!')
-            print(f"=== DEBUG: Redirecionando após POST ===")
+            if convites_criados > 0:
+                messages.success(request, f'{convites_criados} convites criados com sucesso!')
+            else:
+                messages.info(request, 'Nenhum novo convite criado (já existiam)')
+            
             return redirect('admin_convites')
         
-        # Mostra lista de convites
-        print("=== DEBUG: Buscando convites no banco ===")
+        # Busca TODOS os convites e usuários
         convites = Convite.objects.all().order_by('-data_criacao')
-        print(f"=== DEBUG: {convites.count()} convites encontrados ===")
+        usuarios = User.objects.all().order_by('-date_joined')  # Todos os usuários
         
-        return render(request, 'princi/admin_convites.html', {'convites': convites})
+        context = {
+            'convites': convites,
+            'usuarios': usuarios,  # Adiciona usuários ao contexto
+        }
+        
+        return render(request, 'princi/admin_convites.html', context)
     
     except Exception as e:
-        print(f"=== DEBUG: ERRO GERAL em admin_convites: {str(e)} ===")
-        import traceback
-        print(f"=== DEBUG: Traceback: {traceback.format_exc()} ===")
-        messages.error(request, f'Erro interno: {str(e)}')
-        return redirect('index')
+        print(f"ERRO em admin_convites: {str(e)}")
+        messages.error(request, f'Erro ao processar: {str(e)}')
+        return redirect('admin_convites')
+    
     
 @login_required
 @user_passes_test(is_admin) 
