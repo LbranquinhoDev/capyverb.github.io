@@ -3,6 +3,8 @@ from django.db import models
 from django.contrib.auth.models import User
 import secrets
 
+# Model para gerenciar convites de cadastro
+
 class Convite(models.Model):
     email = models.EmailField(unique=True)
     codigo = models.CharField(max_length=50, unique=True)

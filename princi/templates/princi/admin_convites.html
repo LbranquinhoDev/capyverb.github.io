@@ -1,4 +1,4 @@
-<!-- princi/templates/princi/admin_convites.html -->
+
 {% load static %}
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -50,7 +50,7 @@
             {% endfor %}
         {% endif %}
 
-        <!-- SEÇÃO: GERENCIAR USUÁRIOS -->
+        <!-- GERENCIAR USUÁRIOS -->
         <div class="user-management">
             <h2>Gerenciar Usuários ({{ usuarios.count }})</h2>
             
@@ -82,13 +82,13 @@
                             <td>{{ usuario.date_joined|date:"d/m/Y H:i" }}</td>
                             <td>{{ usuario.last_login|date:"d/m/Y H:i"|default:"Nunca" }}</td>
                             <td>
-                                <!-- BOTÃO ALTERAR CARGO - CORRIGIDO -->
+                              
                                 <a href="{% url 'alterar_cargo' usuario.id %}" class="btn btn-sm btn-warning" 
                                    onclick="return confirm('Tem certeza que quer {% if usuario.is_staff %}remover{% else %}adicionar{% endif %} privilégios de admin para {{ usuario.username }}?')">
                                     {% if usuario.is_staff %}👨‍💼 Remover Admin{% else %}👤 Tornar Admin{% endif %}
                                 </a>
                                 
-                                <!-- BOTÃO EXCLUIR USUÁRIO - CORRIGIDO -->
+                                
                                 <a href="{% url 'excluir_usuario' usuario.id %}" class="btn btn-sm btn-danger" 
                                    onclick="return confirm('Tem certeza que deseja excluir o usuário {{ usuario.username }}?')">
                                     🗑️ Excluir

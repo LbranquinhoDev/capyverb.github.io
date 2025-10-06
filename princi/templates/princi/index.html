@@ -188,7 +188,7 @@
 
         <script>
 
-          // CHANGE NAVBAR OPACITY
+          
           const navEl = document.querySelector('.navbar');
           
           window.addEventListener('scroll', () =>{
@@ -202,8 +202,8 @@
           });
 
 
-          // LOADING SPINNER
-          const spinnerWrapperEl = document.querySelector('.spinner-wrapper'); //Seleciona o elemento
+          
+          const spinnerWrapperEl = document.querySelector('.spinner-wrapper'); 
 
                                                 
 
@@ -227,7 +227,7 @@
 
             // Quando o menu fecha
             navbarCollapse.addEventListener("hidden.bs.collapse", function () {
-              // Se o usuário ainda está no topo, volta a ser transparente
+              
               if (window.scrollY === 0) {
                 navbar.classList.remove("navbar-scrolled");
                 navbar.classList.add("navbar-dark");
@@ -235,7 +235,7 @@
             });
           });
 
-          // COPIA EMAIL PARA A AREA DE TRANSFERENCIA
+          
           function copiarParaClipboard(elemento) {
             const texto = elemento.getAttribute("data-copy");
             navigator.clipboard.writeText(texto)
@@ -244,7 +244,7 @@
                 elemento.innerHTML = '<i class="bi bi-check-circle-fill fs-4"></i>';
                 setTimeout(() => {
                   elemento.innerHTML = '<i class="bi bi-envelope-fill fs-4"></i>';
-                }, 1000); // volta para o ícone original depois de 2 segundos
+                }, 1000); 
               })
               .catch(err => {
                 console.error("Erro ao copiar:", err);
