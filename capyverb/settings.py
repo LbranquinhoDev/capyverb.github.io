@@ -12,7 +12,7 @@ DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
 SECRET_KEY = os.environ.get('SECRET_KEY', 'chave-local-desenvolvimento')
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',') + ['localhost', '127.0.0.1']
 
 # Database para Railway
 DATABASES = {
@@ -71,17 +71,7 @@ ROOT_URLCONF = 'capyverb.urls'
 
 WSGI_APPLICATION = 'capyverb.wsgi.application'
 
-# Database
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'capyverb_db',
-        'USER': 'capyverb_user',
-        'PASSWORD': 'capyverb123',
-        'HOST': 'localhost',
-        'PORT': '3306',
-    }
-}
+
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -122,35 +112,3 @@ LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
-if 'RAILWAY_STATIC_URL' in os.environ:
-    DEBUG = False
-    ALLOWED_HOSTS = ['.railway.app', 'localhost', '127.0.0.1']
-    
-    # Database Railway (PostgreSQL)
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.environ['PGDATABASE'],
-            'USER': os.environ['PGUSER'],
-            'PASSWORD': os.environ['PGPASSWORD'],
-            'HOST': os.environ['PGHOST'],
-            'PORT': os.environ['PGPORT'],
-        }
-    }
-    
-    # Static files
-    STATIC_URL = os.environ['RAILWAY_STATIC_URL']
-    
-    if 'RAILWAY_STATIC_URL' in os.environ:
-        STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-else:
-    # Configurações de desenvolvimento
-    DEBUG = True
-    ALLOWED_HOSTS = []
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
