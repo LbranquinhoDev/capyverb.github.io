@@ -1,0 +1,64 @@
+﻿📁 assets
+📁 capyverb
+📁 princi
+📁 static
+📄 aulas.html
+📄 db.sql
+📄 index.html
+📄 login.html
+📄 manage.py
+📄 requirements.txt
+📄 stylesindex.css
+    📄 aulacover.png
+    📄 book.png
+    📄 capyverb.png
+    📄 capyverbflip.png
+    📄 capyverbnotebook.png
+    📄 capyverbregua.png
+    📄 estudante.jpg
+    📄 library.png
+    📄 saladeaula.jpg
+    📄 singlecapy.jpg
+    📄 sittingcapy.jpg
+    📄 teach.png
+    📄 twocapys.jpg
+    📄 asgi.py
+    📄 settings.py
+    📄 urls.py
+    📄 wsgi.py
+    📄 __init__.py
+    📁 migrations
+    📁 templates
+    📄 admin.py
+    📄 apps.py
+    📄 forms.py
+    📄 models.py
+    📄 tests.py
+    📄 urls.py
+    📄 views.py
+    📄 __init__.py
+        📄 0001_initial.py
+        📄 __init__.py
+        📁 princi
+            📄 acessonegado.html
+            📄 admin_convites.html
+            📄 aulas.html
+            📄 cadastro.html
+            📄 index.html
+            📄 login.html
+    📁 assets
+    📁 css
+        📄 aulacover.png
+        📄 book.png
+        📄 capyverb.png
+        📄 capyverbflip.png
+        📄 capyverbnotebook.png
+        📄 capyverbregua.png
+        📄 estudante.jpg
+        📄 library.png
+        📄 saladeaula.jpg
+        📄 singlecapy.jpg
+        📄 sittingcapy.jpg
+        📄 teach.png
+        📄 twocapys.jpg
+        📄 stylesindex.css

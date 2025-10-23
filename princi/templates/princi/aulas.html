@@ -1,0 +1,285 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+	<head> 
+	<meta charset="utf-8"> 
+	<meta name="author" content="Sexteto sinistro">
+	<meta name="keywords" content="english, verb, capybara">
+	<meta name="description" content="Capyverb - Escola de idiomas">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+	
+	<title>Capyverb - Aulas</title>
+    <link rel="icon" href="{% static 'assets/capyverbflip.png' %}">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{% static 'css/stylesindex.css' %}">
+
+  	</head> 
+
+    <body class="bg-light">
+
+      <div class="spinner-wrapper">
+        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+
+      <nav class="navbar navbar-expand-sm navbar-scrolled fixed-top ps-3 pe-3">
+        <div class="container-fluid">
+          
+          <a class="navbar-brand" href="{% url 'index' %}">
+            <img src="{% static 'assets/capyverbflip.png' %}" alt="Logo" width="30" height="24" class="d-inline-block align-text-top"> CAPYVERB
+          </a>
+          
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+              <li class="nav-item">
+                <a class="nav-link active text-primary" aria-current="page" href="{% url 'aulas' %}">
+                  <i class="bi bi-collection-play text-primary pe-2"></i>Aulas
+                </a>
+              </li>
+              
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <i class="bi bi-feather text-primary pe-2"></i>Quem Somos
+                </a>
+              </li>
+              
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <i class="bi bi-chat-left-quote text-primary pe-2"></i>FAQ
+                </a>
+              </li>
+
+              {% if user.is_authenticated %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'logout' %}">
+                  <i class="bi bi-person-circle text-primary pe-2"></i>Sair ({{ user.username }})
+                </a>
+              </li>
+              {% else %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'login' %}">
+                  <i class="bi bi-person-circle text-primary pe-2"></i>Login
+                </a>
+              </li>
+              {% endif %}
+            </ul>
+          </div>
+        </div>
+      </nav>
+
+        <div class="text-center container mt-5 py-5">
+          <h1 id="pagetitle">
+            AULAS
+          </h1>
+        </div>
+
+        <div class="container mb-5" id="conteudoaulas">
+
+          <!-- PRIMEIRA LINHA DE AULAS -->
+          <div class="row mb-3">
+            <div class="col-6 col-sm-3 mb-3 mb-sm-0">
+              <div class="card text-center">
+                <a href="#">
+                  <img src="{% static 'assets/aulacover.png' %}" class="card-img-top" alt="Aula 1">
+                </a>
+                <div class="card-body py-0 px-0">
+                  <a href="#" class="btn btn-primary rounded-top-0 w-100">TITULO DA AULA</a>
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-6 col-sm-3">
+              <div class="card text-center bg-light">
+                <a href="#">
+                  <img src="{% static 'assets/aulacover.png' %}" class="card-img-top" alt="Aula 2">
+                </a>
+                <div class="card-body py-0 px-0">
+                  <a href="#" class="btn btn-primary rounded-top-0 w-100">TITULO DA AULA</a>
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-6 col-sm-3">
+              <div class="card text-center">
+                <a href="#">
+                  <img src="{% static 'assets/aulacover.png' %}" class="card-img-top" alt="Aula 3">
+                </a>
+                <div class="card-body py-0 px-0">
+                  <a href="#" class="btn btn-primary rounded-top-0 w-100">TITULO DA AULA</a>
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-6 col-sm-3">
+              <div class="card text-center bg-light">
+                <a href="#">
+                  <img src="{% static 'assets/aulacover.png' %}" class="card-img-top" alt="Aula 4">
+                </a>
+                <div class="card-body py-0 px-0">
+                  <a href="#" class="btn btn-primary rounded-top-0 w-100">TITULO DA AULA</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SEGUNDA LINHA DE AULAS -->
+          <div class="row mb-3">
+            <div class="col-6 col-sm-3 mb-3 mb-sm-0">
+              <div class="card text-center bg-light">
+                <a href="#">
+                  <img src="{% static 'assets/aulacover.png' %}" class="card-img-top" alt="Aula 5">
+                </a>
+                <div class="card-body py-0 px-0">
+                  <a href="#" class="btn btn-primary rounded-top-0 w-100">TITULO DA AULA</a>
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-6 col-sm-3">
+              <div class="card text-center">
+                <a href="#">
+                  <img src="{% static 'assets/aulacover.png' %}" class="card-img-top" alt="Aula 6">
+                </a>
+                <div class="card-body py-0 px-0">
+                  <a href="#" class="btn btn-primary rounded-top-0 w-100">TITULO DA AULA</a>
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-6 col-sm-3">
+              <div class="card text-center bg-light">
+                <a href="#">
+                  <img src="{% static 'assets/aulacover.png' %}" class="card-img-top" alt="Aula 7">
+                </a>
+                <div class="card-body py-0 px-0">
+                  <a href="#" class="btn btn-primary rounded-top-0 w-100">TITULO DA AULA</a>
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-6 col-sm-3">
+              <div class="card text-center">
+                <a href="#">
+                  <img src="{% static 'assets/aulacover.png' %}" class="card-img-top" alt="Aula 8">
+                </a>
+                <div class="card-body py-0 px-0">
+                  <a href="#" class="btn btn-primary rounded-top-0 w-100">TITULO DA AULA</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TERCEIRA LINHA DE AULAS -->
+          <div class="row mb-3">
+            <div class="col-6 col-sm-3 mb-3 mb-sm-0">
+              <div class="card text-center bg-light">
+                <a href="#">
+                  <img src="{% static 'assets/aulacover.png' %}" class="card-img-top" alt="Aula 9">
+                </a>
+                <div class="card-body py-0 px-0">
+                  <a href="#" class="btn btn-primary rounded-top-0 w-100">TITULO DA AULA</a>
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-6 col-sm-3">
+              <div class="card text-center">
+                <a href="#">
+                  <img src="{% static 'assets/aulacover.png' %}" class="card-img-top" alt="Aula 10">
+                </a>
+                <div class="card-body py-0 px-0">
+                  <a href="#" class="btn btn-primary rounded-top-0 w-100">TITULO DA AULA</a>
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-6 col-sm-3">
+              <div class="card text-center bg-light">
+                <a href="#">
+                  <img src="{% static 'assets/aulacover.png' %}" class="card-img-top" alt="Aula 11">
+                </a>
+                <div class="card-body py-0 px-0">
+                  <a href="#" class="btn btn-primary rounded-top-0 w-100">TITULO DA AULA</a>
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-6 col-sm-3">
+              <div class="card text-center">
+                <a href="#">
+                  <img src="{% static 'assets/aulacover.png' %}" class="card-img-top" alt="Aula 12">
+                </a>
+                <div class="card-body py-0 px-0">
+                  <a href="#" class="btn btn-primary rounded-top-0 w-100">TITULO DA AULA</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        
+        <script>
+          // LOADING SPINNER
+          const spinnerWrapperEl = document.querySelector('.spinner-wrapper');
+
+          window.addEventListener('load', () => {
+              spinnerWrapperEl.style.opacity = '0';
+              setTimeout(() => {
+                  spinnerWrapperEl.style.display = 'none';
+              }, 200);
+          });
+
+          // COPIA EMAIL PARA A AREA DE TRANSFERENCIA
+          function copiarParaClipboard(elemento) {
+            const texto = elemento.getAttribute("data-copy");
+            navigator.clipboard.writeText(texto)
+              .then(() => {
+                elemento.innerHTML = '<i class="bi bi-check-circle-fill fs-4"></i>';
+                setTimeout(() => {
+                  elemento.innerHTML = '<i class="bi bi-envelope-fill fs-4"></i>';
+                }, 1000);
+              })
+              .catch(err => {
+                console.error("Erro ao copiar:", err);
+                alert("Erro ao copiar!");
+              });
+          }
+        </script>
+
+        <footer class="bg-dark py-5 mt-3">
+          <div class="container text-light text-center">
+            <div class="container w-25">
+              <div class="row">
+                <div class="col-4 col-sm-4">
+                  <button type="button" class="btn" onclick="location.href='https://github.com/capyverb'">
+                    <i class="bi bi-github fs-4"></i>
+                  </button>
+                </div>
+                <div class="col-4 col-sm-4">
+                  <button type="button" class="btn" data-copy="capyverb@outlook.com" onclick="copiarParaClipboard(this)">
+                    <i class="bi bi-envelope-fill fs-4"></i>
+                  </button>
+                </div>
+                <div class="col-4 col-sm-4">
+                  <button type="button" class="btn" onclick="location.href='http://example.com'">
+                    <i class="bi bi-instagram fs-4"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="display-6">CapyVerb</div>
+            </div>
+          </div>
+        </footer>
+    </body>
+</html>
