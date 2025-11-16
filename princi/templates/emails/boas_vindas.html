@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+        .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
+        .info-box { background: white; border-left: 4px solid #28a745; padding: 15px; margin: 15px 0; }
+        .button { background: #28a745; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block; }
+        .footer { text-align: center; margin-top: 20px; color: #666; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌟 Bem-vindo ao Capyverb!</h1>
+        </div>
+        <div class="content">
+            <p>Olá <strong>{{ usuario.username }}</strong>!</p>
+            <p>Sua conta foi criada com sucesso no Capyverb.</p>
+            
+            <div class="info-box">
+                <p><strong>Seus dados de acesso:</strong></p>
+                <p>Usuário: {{ usuario.username }}</p>
+                <p>Email: {{ usuario.email }}</p>
+                <p>Data de criação: {{ usuario.date_joined|date:"d/m/Y" }}</p>
+                {% if senha_temporaria %}
+                <p>Senha temporária: {{ senha_temporaria }}</p>
+                <p><small>Recomendamos que você altere esta senha no primeiro acesso.</small></p>
+                {% endif %}
+            </div>
+            
+            <p style="text-align: center;">
+                <a href="{{ site_url }}/login" class="button">Fazer Login</a>
+            </p>
+            
+            <p>Estamos muito felizes em tê-lo conosco! 🎉</p>
+        </div>
+        <div class="footer">
+            <p>Este é um email automático, por favor não responda.</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,174 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <title>Gerenciar Convites - Capyverb</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/stylesindex.css' %}">
+    <style>
+        .user-management, .invite-management {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top ps-3 pe-3">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'index' %}">
+                <img src="{% static 'assets/capyverbflip.png' %}" alt="Logo" width="30" height="24" class="d-inline-block align-text-top"> CAPYVERB
+            </a>
+            <div class="navbar-nav ms-auto">
+                {% if user.is_authenticated %}
+                    <span class="navbar-text me-3">
+                        Olá, {{ user.username }}
+                        {% if user.is_staff %}<span class="badge bg-warning">Admin</span>{% endif %}
+                    </span>
+                    <a class="nav-link" href="{% url 'logout' %}">Sair</a>
+                {% else %}
+                    <a class="nav-link" href="{% url 'login' %}">Login</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5 py-5">
+        <h1>Painel Administrativo</h1>
+        <p class="text-muted">Logado como: <strong>{{ user.username }}</strong> <span class="badge bg-success">Admin</span></p>
+        
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- GERENCIAR USUÁRIOS -->
+        <div class="user-management">
+            <h2>Gerenciar Usuários ({{ usuarios.count }})</h2>
+            
+            {% if usuarios %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Cargo</th>
+                            <th>Data de Registro</th>
+                            <th>Último Login</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for usuario in usuarios %}
+                        <tr>
+                            <td>{{ usuario.username }}</td>
+                            <td>{{ usuario.email|default:"Não informado" }}</td>
+                            <td>
+                                {% if usuario.is_staff %}
+                                    <span class="badge bg-danger">Administrador</span>
+                                {% else %}
+                                    <span class="badge bg-info">Usuário</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ usuario.date_joined|date:"d/m/Y H:i" }}</td>
+                            <td>{{ usuario.last_login|date:"d/m/Y H:i"|default:"Nunca" }}</td>
+                            <td>
+                              
+                                <a href="{% url 'alterar_cargo' usuario.id %}" class="btn btn-sm btn-warning" 
+                                   onclick="return confirm('Tem certeza que quer {% if usuario.is_staff %}remover{% else %}adicionar{% endif %} privilégios de admin para {{ usuario.username }}?')">
+                                    {% if usuario.is_staff %}👨‍💼 Remover Admin{% else %}👤 Tornar Admin{% endif %}
+                                </a>
+                                
+                                
+                                <a href="{% url 'excluir_usuario' usuario.id %}" class="btn btn-sm btn-danger" 
+                                   onclick="return confirm('Tem certeza que deseja excluir o usuário {{ usuario.username }}?')">
+                                    🗑️ Excluir
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                Nenhum usuário cadastrado.
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- SEÇÃO: GERENCIAR CONVITES -->
+        <div class="invite-management">
+            <h2>Gerenciar Convites ({{ convites.count }})</h2>
+            
+            <form method="post" class="mb-4">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">Emails (um por linha):</label>
+                    <textarea name="emails" class="form-control" rows="5" placeholder="usuario1@email.com&#10;usuario2@email.com"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Criar Convites</button>
+            </form>
+
+            <h3>Convites Existentes</h3>
+            {% if convites %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Email</th>
+                            <th>Código</th>
+                            <th>Status</th>
+                            <th>Data</th>
+                            <th>Usuário</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for convite in convites %}
+                        <tr>
+                            <td>{{ convite.email }}</td>
+                            <td><code>{{ convite.codigo }}</code></td>
+                            <td>
+                                {% if convite.usado %}
+                                    <span class="badge bg-success">Usado</span>
+                                {% else %}
+                                    <span class="badge bg-warning">Pendente</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ convite.data_criacao|date:"d/m/Y H:i" }}</td>
+                            <td>
+                                {% if convite.usuario %}
+                                    {{ convite.usuario.username }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                Nenhum convite criado ainda. Adicione emails acima para criar convites.
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="mt-4">
+            <a href="{% url 'index' %}" class="btn btn-secondary">Voltar para Home</a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
