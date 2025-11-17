@@ -136,12 +136,12 @@ if not DEBUG:
 
 
 env = environ.Env()
-environ.Env.read_env()
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.sendgrid.net'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'apikey'
-EMAIL_HOST_PASSWORD = env('SENDGRID_API_KEY')
-DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL')
+EMAIL_HOST_PASSWORD = env('SENDGRID_API_KEY', default='temp-key-for-local-dev')
+DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL', default='capyverb@outloook.com')
+SITE_URL = env('SITE_URL', default='http://127.0.0.1:8000')
