@@ -7,20 +7,21 @@ from pathlib import Path
 import dj_database_url
 import environ
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'
+env = environ.Env()
+
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Security settings
+
 DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
 SECRET_KEY = os.environ.get('SECRET_KEY', 'chave-local-desenvolvimento')
 
-# ALLOWED_HOSTS - ARRUMADO PRA PARAR O REDIRECT
 ALLOWED_HOSTS = ['capyverb-github-io.onrender.com', 'localhost', '127.0.0.1', '.onrender.com']
 
-# Database configuration - SQLite for development, PostgreSQL for production
+
 if 'DATABASE_URL' in os.environ:
-    # Render PostgreSQL database
+    
     DATABASES = {
         'default': dj_database_url.config(
             default=os.environ.get('DATABASE_URL'),
@@ -29,7 +30,7 @@ if 'DATABASE_URL' in os.environ:
         )
     }
 else:
-    # Local SQLite database for development
+    
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -49,7 +50,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # Added for static files
+    'whitenoise.middleware.WhiteNoiseMiddleware',  
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -81,7 +82,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'capyverb.wsgi.application'
 
-# Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -97,13 +97,13 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# Internationalization
+
 LANGUAGE_CODE = 'pt-br'
 TIME_ZONE = 'America/Sao_Paulo'
 USE_I18N = True
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
+
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Added for production
 
@@ -112,17 +112,16 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'assets'),
 ]
 
-# WhiteNoise configuration for static files
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Default primary key field type
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
-# Security settings for production - ARRUMADO PRA PARAR O LOOP
+
 if not DEBUG:
     SECURE_SSL_REDIRECT = False
     SESSION_COOKIE_SECURE = True
@@ -135,13 +134,15 @@ if not DEBUG:
     SECURE_CONTENT_TYPE_NOSNIFF = True
 
 
-env = environ.Env()
+if DEBUG:
+    # Desenvolvimento - modo console
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    print("🔧 MODO DESENVOLVIMENTO: Emails no console")
+else:
+    # Produção - modo Resend real
+    print("🚀 MODO PRODUÇÃO: Emails reais via Resend")
+    # Resend funciona via API, não precisa de backend SMTP
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.sendgrid.net'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'apikey'
-EMAIL_HOST_PASSWORD = env('SENDGRID_API_KEY', default='temp-key-for-local-dev')
-DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL', default='capyverb@outloook.com')
-SITE_URL = env('SITE_URL', default='http://127.0.0.1:8000')
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'onboarding@resend.dev')
+SITE_URL = os.environ.get('SITE_URL', 'https://capyverb-github-io.onrender.com')
+RESEND_API_KEY = os.environ.get('re_2oB61n1P_KgzNZ5xYxBZHWQzKtAr466YH')
