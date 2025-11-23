@@ -1,0 +1,10 @@
+[build]
+builder = "nixpacks"
+
+[deploy]
+startCommand = "python manage.py migrate && gunicorn capyverb.wsgi:application"
+
+[[services]]
+name = "web"
+[http]
+internalPort = 8000
