@@ -1,14 +1,14 @@
-"""
-Django settings for capyverb project.
-"""
 
 import os
 from pathlib import Path
 import dj_database_url
 import environ
+import warnings
 
 env = environ.Env()
 
+
+PORT = os.getenv('PORT', '8080')
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -94,11 +94,26 @@ USE_I18N = True
 USE_TZ = True
 
 
+warnings.filterwarnings("ignore", message="No directory at: .*staticfiles.*")
+
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+os.makedirs(STATIC_ROOT, exist_ok=True)
+os.makedirs(os.path.join(BASE_DIR, 'static'), exist_ok=True)
+
+
+WHITENOISE_USE_FINDERS = True
+WHITENOISE_MANIFEST_STRICT = False
+WHITENOISE_ALLOW_ALL_ORIGINS = True
+
+
+if DEBUG:
+    INSTALLED_APPS += ['whitenoise.runserver_nostatic']
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -134,6 +149,20 @@ else:
 DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'capyverb@outlook.com')
 SITE_URL = os.environ.get('SITE_URL', 'https://capyverb-github-io.onrender.com')
 
+
+class DisableStaticFilesWarning:
+    def __init__(self, get_response):
+        self.get_response = get_response
+        
+    def __call__(self, request):
+        import warnings
+        from django.core.handlers.base import BaseHandler
+        
+        # Suprime o warning de staticfiles
+        warnings.filterwarnings("ignore", message="No directory at: .*staticfiles.*")
+        
+        return self.get_response(request)
+    
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',  
@@ -143,13 +172,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'capyverb.settings.DisableStaticFilesWarning',
 
 ]
 
-WHITENOISE_USE_FINDERS = True
-WHITENOISE_MANIFEST_STRICT = False
-WHITENOISE_ALLOW_ALL_ORIGINS = True
-
-
-if DEBUG:
-    INSTALLED_APPS += ['whitenoise.runserver_nostatic']
