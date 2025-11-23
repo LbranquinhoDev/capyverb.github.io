@@ -17,7 +17,7 @@ DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
 SECRET_KEY = os.environ.get('SECRET_KEY', 'chave-local-desenvolvimento')
 
-ALLOWED_HOSTS = ['capyverb-github-io.onrender.com', 'localhost', '127.0.0.1', '.onrender.com']
+ALLOWED_HOSTS = ['capyverb-github-io.onrender.com', 'localhost', '127.0.0.1', '.onrender.com','capyverbgithubio-production.up.railway.app','.railway.app',]
 
 
 if 'DATABASE_URL' in os.environ:
@@ -130,6 +130,8 @@ if not DEBUG:
     CSRF_TRUSTED_ORIGINS = [
         'https://capyverb-github-io.onrender.com',
         'https://*.onrender.com',
+        'https://capyverbgithubio-production.up.railway.app',
+        'https://*.railway.app',
     ]
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
