@@ -1,9 +1,9 @@
-set -e
+echo "🚀 Iniciando deploy no Railway..."
 
-echo "Instalando dependencias"
 pip install -r requirements.txt
 
-echo "Aplicando migrações do banco de dados"
 python manage.py collectstatic --noinput
 
-echo "Concluido com sucesso"
+python manage.py migrate
+
+echo "✅ Build concluído!"
