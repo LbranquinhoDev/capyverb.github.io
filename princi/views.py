@@ -6,8 +6,25 @@ from .forms import CadastroComConviteForm, LoginForm
 from .models import Convite
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
-from .services.email_service import EmailService
 import secrets
+from django.http import HttpResponse
+from django.db import connection
+import os
+
+def debug_database(request):
+    """Página de debug do banco de dados"""
+    info = {
+        'database_url': os.getenv('DATABASE_URL', 'Não configurado'),
+        'database_engine': connection.settings_dict['ENGINE'],
+        'database_name': connection.settings_dict['NAME'],
+        'superusers_count': User.objects.filter(is_superuser=True).count(),
+        'all_users_count': User.objects.all().count(),
+    }
+    return HttpResponse(f"""
+        <h1>Debug Database</h1>
+        <pre>{info}</pre>
+        <a href="/admin/">Tentar Admin</a>
+    """)
 
 # Funcao para verificar se usuario e admin
 def is_admin(user):
