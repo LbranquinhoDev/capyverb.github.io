@@ -15,7 +15,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
-SECRET_KEY = os.environ.get('SECRET_KEY', 'chave-local-desenvolvimento')
+SECRET_KEY = os.environ.get('SECRET_KEY', '')
 
 ALLOWED_HOSTS = ['capyverb-github-io.onrender.com', 'localhost', '127.0.0.1', '.onrender.com','capyverbgithubio-production.up.railway.app','.railway.app',]
 
@@ -136,19 +136,6 @@ if not DEBUG:
     ]
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
-
-
-if DEBUG:
-    
-    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-    print("🔧 MODO DESENVOLVIMENTO: Emails no console")
-else:
-    
-    print("🚀 MODO PRODUÇÃO: Emails reais via Resend")
-    
-
-DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'capyverb@outlook.com')
-SITE_URL = os.environ.get('SITE_URL', 'https://capyverb-github-io.onrender.com')
 
 
 class DisableStaticFilesWarning:
