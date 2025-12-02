@@ -12,5 +12,5 @@ urlpatterns = [
     path('painel/excluir-usuario/<int:user_id>/', views.excluir_usuario, name='excluir_usuario'),
     path('painel/alterar-cargo/<int:user_id>/', views.alterar_cargo, name='alterar_cargo'),
     path('painel/enviar-convite/<int:convite_id>/', views.enviar_convite, name='enviar_convite'),
-    path('debug-db/', views.debug_database, name='debug_db'),
+
 ]
