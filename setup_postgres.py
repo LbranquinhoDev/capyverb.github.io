@@ -2,157 +2,109 @@
 import os
 import sys
 import time
-import psycopg2
-from psycopg2 import OperationalError
-import django
 
-def wait_for_postgres(max_retries=30, delay=2):
-    """Aguarda o PostgreSQL ficar disponível"""
-    print("🔄 Aguardando PostgreSQL ficar disponível...")
-    
-    database_url = os.getenv('DATABASE_URL')
-    if not database_url:
-        print("❌ DATABASE_URL não encontrada")
-        return False
-    
-    for i in range(max_retries):
-        try:
-            conn = psycopg2.connect(database_url)
-            conn.close()
-            print("✅ PostgreSQL conectado com sucesso!")
-            return True
-        except OperationalError as e:
-            print(f"⏳ Tentativa {i+1}/{max_retries}: PostgreSQL ainda não disponível...")
-            if i < max_retries - 1:
-                time.sleep(delay)
-    
-    print("❌ PostgreSQL não ficou disponível a tempo")
-    return False
+print("=" * 60)
+print("🚀 EXECUTANDO SETUP_POSTGRES.PY - INÍCIO")
+print("=" * 60)
 
-def setup_database():
-    """Configuração completa do banco"""
-    print("=" * 60)
-    print("🚀 CONFIGURAÇÃO DO POSTGRESQL NO RAILWAY")
-    print("=" * 60)
-    
-    # 1. Aguardar PostgreSQL
-    if not wait_for_postgres():
-        return False
-    
-    # 2. Configurar Django
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'capyverb.settings')
+# 1. Forçar variáveis de ambiente
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'capyverb.settings')
+
+# 2. Mostrar variáveis importantes
+print("🔍 VARIÁVEIS DE AMBIENTE:")
+print(f"   DJANGO_SETTINGS_MODULE: {os.getenv('DJANGO_SETTINGS_MODULE')}")
+print(f"   DATABASE_URL: {'EXISTE' if os.getenv('DATABASE_URL') else 'NÃO EXISTE'}")
+print(f"   PORT: {os.getenv('PORT', '8080')}")
+
+# 3. Importar Django
+try:
+    import django
     django.setup()
-    
-    # 3. Aplicar migrações
-    print("\n📦 Aplicando migrações Django...")
+    print("✅ Django configurado")
+except Exception as e:
+    print(f"❌ Erro ao configurar Django: {e}")
+    sys.exit(1)
+
+# 4. Aplicar migrações
+print("\n📦 Aplicando migrações...")
+try:
     from django.core.management import execute_from_command_line
-    
-    try:
-        execute_from_command_line(['manage.py', 'migrate'])
-        print("✅ Migrações aplicadas com sucesso!")
-    except Exception as e:
-        print(f"❌ Erro nas migrações: {e}")
-        return False
-    
-    # 4. Criar superuser
-    print("\n👑 Criando superuser...")
+    execute_from_command_line(['manage.py', 'migrate', '--noinput'])
+    print("✅ Migrações aplicadas")
+except Exception as e:
+    print(f"❌ Erro nas migrações: {e}")
+
+# 5. CRIAR SUPERUSER (MÉTODO 100% GARANTIDO)
+print("\n👑 CRIANDO SUPERUSER...")
+try:
     from django.contrib.auth import get_user_model
     User = get_user_model()
     
-    try:
-        # Verificar se já existe
-        if User.objects.filter(username='admin').exists():
-            admin = User.objects.get(username='admin')
-            print(f"✅ Admin já existe: {admin.username}")
-            
-            # Garantir permissões
-            if not admin.is_superuser:
-                admin.is_superuser = True
-                admin.is_staff = True
-                admin.save()
-                print("✅ Admin promovido a superuser")
-        else:
-            # Criar novo
-            User.objects.create_superuser(
+    # Verificar conexão
+    from django.db import connection
+    connection.ensure_connection()
+    print("✅ Conexão com banco: OK")
+    
+    # Método 1: Verificar se já existe
+    if User.objects.filter(username='admin').exists():
+        user = User.objects.get(username='admin')
+        print(f"✅ Admin já existe: {user.username}")
+        
+        # Garantir que é superuser
+        if not user.is_superuser or not user.is_staff:
+            user.is_superuser = True
+            user.is_staff = True
+            user.save()
+            print("✅ Admin promovido a superuser/staff")
+    else:
+        # Método 2: Criar novo
+        try:
+            user = User.objects.create_superuser(
                 username='admin',
                 email='admin@capyverb.com',
                 password='admin123'
             )
             print("✅ SUPERUSER CRIADO: admin / admin123")
-        
-        # 5. Verificação
-        print("\n🔍 VERIFICAÇÃO FINAL:")
-        print(f"📊 Total de usuários: {User.objects.count()}")
-        print(f"👑 Superusers: {User.objects.filter(is_superuser=True).count()}")
-        
-        users = User.objects.all()[:5]  # Mostrar primeiros 5
-        for user in users:
-            print(f"   👤 {user.username} | {user.email} | Superuser: {user.is_superuser}")
-        
-        return True
-        
-    except Exception as e:
-        print(f"❌ Erro ao criar superuser: {e}")
-        return False
+        except Exception as e:
+            print(f"❌ Erro ao criar superuser (método 1): {e}")
+            
+            # Método 3: Criar manualmente
+            try:
+                user = User.objects.create_user(
+                    username='admin',
+                    email='admin@capyverb.com',
+                    password='admin123'
+                )
+                user.is_superuser = True
+                user.is_staff = True
+                user.save()
+                print("✅ SUPERUSER CRIADO (método manual): admin / admin123")
+            except Exception as e2:
+                print(f"❌ Erro ao criar superuser (método 2): {e2}")
+    
+    # 6. VERIFICAÇÃO FINAL
+    print("\n🔍 VERIFICAÇÃO FINAL:")
+    all_users = User.objects.all()
+    print(f"📊 Total de usuários: {all_users.count()}")
+    
+    for user in all_users:
+        print(f"   👤 {user.username} | {user.email} | Superuser: {user.is_superuser} | Staff: {user.is_staff}")
+    
+except Exception as e:
+    print(f"💥 ERRO CRÍTICO: {e}")
+    import traceback
+    traceback.print_exc()
 
-def check_database_connection():
-    """Verifica conexão e lista tabelas"""
-    print("\n🔍 VERIFICANDO CONEXÃO E TABELAS...")
-    
-    database_url = os.getenv('DATABASE_URL')
-    try:
-        conn = psycopg2.connect(database_url)
-        cursor = conn.cursor()
-        
-        # Listar todas as tabelas
-        cursor.execute("""
-            SELECT table_name 
-            FROM information_schema.tables 
-            WHERE table_schema = 'public'
-            ORDER BY table_name;
-        """)
-        
-        tables = cursor.fetchall()
-        print(f"📊 Tabelas no PostgreSQL: {len(tables)}")
-        
-        for table in tables:
-            cursor.execute(f"SELECT COUNT(*) FROM {table[0]};")
-            count = cursor.fetchone()[0]
-            print(f"   • {table[0]}: {count} registros")
-        
-        conn.close()
-        return True
-        
-    except Exception as e:
-        print(f"❌ Erro ao verificar tabelas: {e}")
-        return False
+# 7. INICIAR SERVIDOR
+print("\n" + "=" * 60)
+print("🌐 INICIANDO SERVIDOR GUNICORN...")
+print("=" * 60)
 
-if __name__ == "__main__":
-    print("\n" + "="*60)
-    print("🚀 INICIANDO CONFIGURAÇÃO COMPLETA DO POSTGRES")
-    print("="*60)
-    
-    success = True
-    
-    # Verificar conexão
-    if not check_database_connection():
-        success = False
-    
-    # Setup completo
-    if success and setup_database():
-        print("\n" + "="*60)
-        print("🎉 POSTGRES CONFIGURADO COM SUCESSO!")
-        print("="*60)
-        
-        # Iniciar servidor
-        print("\n🌐 INICIANDO SERVIDOR GUNICORN...")
-        port = os.getenv('PORT', '8080')
-        os.execvp("gunicorn", [
-            "gunicorn",
-            "capyverb.wsgi:application",
-            "--bind", f"0.0.0.0:{port}",
-            "--workers", "2"
-        ])
-    else:
-        print("\n💥 FALHA NA CONFIGURAÇÃO DO POSTGRES")
-        sys.exit(1)
+port = os.getenv('PORT', '8080')
+os.execvp("gunicorn", [
+    "gunicorn",
+    "capyverb.wsgi:application",
+    "--bind", f"0.0.0.0:{port}",
+    "--workers", "1",
+    "--timeout", "120"
+])
