@@ -15,7 +15,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
-SECRET_KEY = os.environ.get('SECRET_KEY', '')
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-sua-chave-local-aqui-32-caracteres')
 
 ALLOWED_HOSTS = ['capyverb-github-io.onrender.com', 'localhost', '127.0.0.1', '.onrender.com','capyverbgithubio-production.up.railway.app','.railway.app',]
 

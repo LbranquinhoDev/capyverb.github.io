@@ -11,16 +11,14 @@ from django.http import HttpResponse
 from django.db import connection
 import os
 
-def test_view(request):
-    """View simples para testar"""
-    return HttpResponse("✅ Teste OK - Django funcionando")
+
 
 def is_admin(user):
     return user.is_staff
 
 
 def index(request):
-    return HttpResponse("🏠 Capyverb - Página Inicial")
+    return render(request, 'princi/index.html')
 
 
 def cadastro_view(request):
